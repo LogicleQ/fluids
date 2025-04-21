@@ -17,8 +17,13 @@ int main ()
 		.winWidth = 1000,
 		.winHeight = 800,
 
-		.ptclRadius = 7,
-		.ptclSides = 10
+		.ptclRadius = 5,
+		.ptclSides = 10,
+
+		.simSpeed = 0.01,
+		.ptclForceConstant = 40,
+		.wallForceConstant = 10,
+		.frictionConstant = 0.01
 	};
 
 
@@ -26,17 +31,29 @@ int main ()
 
 
 
-	std::vector<SDL_FPoint> ptcls;
+	std::vector<Particle> ptcls;
 
 	//populate with random positions
 	srand(time(0));
 
-	for (int i = 0; i < 20; ++i)
+	for (int i = 0; i < 400; ++i)
 	{
 		float x = randFloat() * options.winWidth;
 		float y = randFloat() * options.winHeight;
 
-		ptcls.push_back({x, y});
+		float vx = randFloat() * 2 - 1;
+		float vy = randFloat() * 2 - 1;
+
+		Particle ptcl
+		{
+			.posX = x,
+			.posY = y,
+
+			.velX = 0,
+			.velY = 0
+		};
+
+		ptcls.push_back(ptcl);
 	}
 
 

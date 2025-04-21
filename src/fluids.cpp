@@ -25,7 +25,7 @@ FluidSim::FluidSim (FluidOptions options)
 }
 
 
-void FluidSim::populate (std::vector<SDL_FPoint> ptcls)
+void FluidSim::populate (std::vector<Particle> ptcls)
 {
 	m_ptcls = ptcls;
 }

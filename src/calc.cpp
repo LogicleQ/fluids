@@ -1,59 +1,117 @@
 #include "fluids.hpp"
 
-#include <vector>
 #include <cmath>
 
-void FluidSim::render ()
+void FluidSim::move ()
 {
-	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-	SDL_RenderClear(m_renderer);
 
 	for (size_t i = 0; i < m_ptcls.size(); ++i)
 	{
-		drawParticle(m_ptcls[i].x, m_ptcls[i].y, {0, 0.4, 1, 1});
+		Particle &self = m_ptcls[i];
+
+		self.posX += self.velX * m_options.simSpeed;
+		self.posY += self.velY * m_options.simSpeed;
 	}
 
-	SDL_RenderPresent(m_renderer);
 }
 
 
-
-
-
-#define PI (3.14159265358979)
-
-void FluidSim::drawParticle (float x, float y, SDL_FColor color)
+void FluidSim::accel ()
 {
-	std::vector<SDL_Vertex> vertices;
-	std::vector<int> indices;
-
-	SDL_Vertex center
+	for (size_t i = 0; i < m_ptcls.size(); ++i)
 	{
-		.position = {x, y},
-		.color = color
-	};
+		Particle &self = m_ptcls[i];
 
-	vertices.push_back(center);
-
-
-	for (int i = 0; i < m_options.ptclSides; ++i)
-	{
-		float theta = 2 * PI * i / m_options.ptclSides;
-
-		float tempX = x + m_options.ptclRadius * cos(theta);
-		float tempY = y + m_options.ptclRadius * sin(theta);
-
-		SDL_Vertex vertex
+		for (size_t j = 0; j < m_ptcls.size(); ++j)
 		{
-			.position = {tempX, tempY},
-			.color = color
-		};
+			if (i == j) continue;
 
-		vertices.push_back(vertex);
+			Particle &other = m_ptcls[j];
+
+			interParticleForce(self, other);
+
+		}
+
+
+		wallForce(self);
+		frictionForce(self);
 
 	}
+}
 
 
-	SDL_RenderGeometry (m_renderer, NULL, &vertices[0], vertices.size(), &m_indices[0], m_indices.size());
+void FluidSim::interParticleForce (Particle &self, Particle &other)
+{
+
+	float dx = self.posX - other.posX;
+	float dy = self.posY - other.posY;
+
+	float dist = sqrt(dx * dx + dy * dy);
+
+	float normDx = dx / dist;
+	float normDy = dy / dist;
+
+	float accelMag = m_options.ptclForceConstant / dist / dist;
+
+	float accelX = accelMag * normDx;
+	float accelY = accelMag * normDy;
+
+	self.velX += accelX * m_options.simSpeed;
+	self.velY += accelY * m_options.simSpeed;
+
+}
+
+void FluidSim::wallForce (Particle &self)
+{
+
+	float distFromLeft = self.posX;
+	float distFromRight = m_options.winWidth - self.posX;
+
+	float distFromTop = self.posY;
+	float distFromBottom = m_options.winHeight - self.posY;
+
+	float forceConstant = m_options.wallForceConstant;
+
+	auto forceMag = [forceConstant] (float dist) -> float
+	{
+		if (dist < 0)
+		{
+			return forceConstant / 5 / 5;
+		}
+		else
+		{
+			return forceConstant / (dist + 5) / (dist + 5);
+		}
+	};
+
+	float accelX = forceMag(distFromLeft) - forceMag(distFromRight);
+	float accelY = forceMag(distFromTop) - forceMag(distFromBottom);
+
+	self.velX += accelX * m_options.simSpeed;
+	self.velY += accelY * m_options.simSpeed;
+
+}
+
+
+void FluidSim::frictionForce (Particle &self)
+{
+
+	float ptclSpeed = sqrt(self.velX * self.velX + self.velY * self.velY);
+
+	float normVelX = self.velX / ptclSpeed;
+	float normVelY = self.velY / ptclSpeed;
+
+	float frictionX = normVelX * -m_options.frictionConstant;
+	float frictionY = normVelY * -m_options.frictionConstant;
+
+	if (fabs(self.velX) >= fabs(frictionX * m_options.simSpeed))
+	{
+		self.velX += frictionX * m_options.simSpeed;
+	}
+
+	if (fabs(self.velY) >= fabs(frictionY * m_options.simSpeed))
+	{
+		self.velY += frictionY * m_options.simSpeed;
+	}
 
 }

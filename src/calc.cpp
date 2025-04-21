@@ -8,10 +8,14 @@ void FluidSim::render ()
 	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_renderer);
 
-	drawParticle(100, 100, {0, 0.4, 1, 1});
+	for (size_t i = 0; i < m_ptcls.size(); ++i)
+	{
+		drawParticle(m_ptcls[i].x, m_ptcls[i].y, {0, 0.4, 1, 1});
+	}
 
 	SDL_RenderPresent(m_renderer);
 }
+
 
 
 

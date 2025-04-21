@@ -8,6 +8,9 @@
 
 struct FluidOptions
 {
+	uint32_t winWidth = 800;
+	uint32_t winHeight = 600;
+
 	//particle rendering properties
 	float ptclRadius = 10;
 	uint16_t ptclSides = 3;
@@ -16,8 +19,9 @@ struct FluidOptions
 class FluidSim
 {
 	public:
-		FluidSim (uint32_t width, uint32_t height, FluidOptions options);
+		FluidSim (FluidOptions options);
 
+		void populate (std::vector<SDL_FPoint> ptcls);
 		void run ();
 
 	private:
@@ -26,15 +30,14 @@ class FluidSim
 
 		static bool m_created;
 
-		uint32_t m_width;
-		uint32_t m_height;
-
 		FluidOptions m_options;
 
 		SDL_Window* m_window;
 		SDL_Renderer* m_renderer;
 
 		std::vector<int> m_indices;
+
+		std::vector<SDL_FPoint> m_ptcls;
 };
 
 

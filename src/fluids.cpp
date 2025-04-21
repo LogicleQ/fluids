@@ -2,10 +2,8 @@
 
 bool FluidSim::m_created = false;
 
-FluidSim::FluidSim (uint32_t width, uint32_t height, FluidOptions options)
-	: m_width {width},
-		m_height {height},
-		m_options {options}
+FluidSim::FluidSim (FluidOptions options)
+	: m_options {options}
 {
 
 	if (m_created)
@@ -26,9 +24,16 @@ FluidSim::FluidSim (uint32_t width, uint32_t height, FluidOptions options)
 
 }
 
+
+void FluidSim::populate (std::vector<SDL_FPoint> ptcls)
+{
+	m_ptcls = ptcls;
+}
+
+
 void FluidSim::run ()
 {
-	m_window = SDL_CreateWindow("Fluids", m_width, m_height, 0);
+	m_window = SDL_CreateWindow("Fluids", m_options.winWidth, m_options.winHeight, 0);
 
 	m_renderer = SDL_CreateRenderer(m_window, 0);
 

@@ -1,3 +1,3 @@
 build:
 	@cd src; \
-		g++ -o ../fluids -lSDL3 *.cpp
+		g++ -O3 -o ../fluids -lSDL3 *.cpp

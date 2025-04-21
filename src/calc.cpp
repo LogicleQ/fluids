@@ -34,6 +34,9 @@ void FluidSim::accel ()
 
 
 		wallForce(self);
+		gravityForce(self);
+
+		//friction should be calculated last
 		frictionForce(self);
 
 	}
@@ -51,7 +54,10 @@ void FluidSim::interParticleForce (Particle &self, Particle &other)
 	float normDx = dx / dist;
 	float normDy = dy / dist;
 
-	float accelMag = m_options.ptclForceConstant / dist / dist;
+
+	float asymp = m_options.farForceAsymp;
+	float accelMag = m_options.ptclFarForceConstant / (dist + asymp) / (dist + asymp);
+	accelMag += m_options.ptclNearForceConstant / dist / dist;
 
 	float accelX = accelMag * normDx;
 	float accelY = accelMag * normDy;
@@ -114,4 +120,10 @@ void FluidSim::frictionForce (Particle &self)
 		self.velY += frictionY * m_options.simSpeed;
 	}
 
+}
+
+
+void FluidSim::gravityForce (Particle &self)
+{
+	self.velY -= m_options.gravityConstant * m_options.simSpeed;
 }

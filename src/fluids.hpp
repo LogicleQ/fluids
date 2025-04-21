@@ -30,9 +30,12 @@ struct FluidOptions
 
 	//simulation properties
 	float simSpeed = 0.01;
-	float ptclForceConstant = 10;
+	float ptclFarForceConstant = -40;
+	float farForceAsymp = 10;
+	float ptclNearForceConstant = 10;
 	float wallForceConstant = 10;
 	float frictionConstant = 0.1;
+	float gravityConstant = -2;
 
 };
 
@@ -54,6 +57,7 @@ class FluidSim
 		void interParticleForce (Particle &self, Particle &other);
 		void wallForce (Particle &self);
 		void frictionForce (Particle &self);
+		void gravityForce (Particle &self);
 
 		static bool m_created;
 

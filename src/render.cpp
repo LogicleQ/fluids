@@ -15,7 +15,16 @@ void FluidSim::render ()
 
 	for (size_t i = 0; i < m_ptcls.size(); ++i)
 	{
-		drawParticle(m_ptcls[i], {0, 0.4, 1, 1});
+		Particle &ptcl = m_ptcls[i];
+
+		double speed = sqrt(ptcl.velX * ptcl.velX + ptcl.velY * ptcl.velY);
+
+
+		float r = 0.1 * speed;
+		float g = 0.4 + 0.2 * speed;
+		float b = 1 - 0.05 * speed;
+
+		drawParticle(ptcl, {r, g, b, 1});
 	}
 
 	SDL_RenderPresent(m_renderer);

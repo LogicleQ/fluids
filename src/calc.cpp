@@ -33,10 +33,10 @@ void FluidSim::accel ()
 		}
 
 
-		wallForce(self);
 		gravityForce(self);
 
-		//friction should be calculated last
+		//these two should be calculated last
+		wallForce(self);
 		frictionForce(self);
 
 	}
@@ -59,6 +59,9 @@ void FluidSim::interParticleForce (Particle &self, Particle &other)
 	float accelMag = m_options.ptclFarForceConstant / (dist + asymp) / (dist + asymp);
 	accelMag += m_options.ptclNearForceConstant / dist / dist;
 
+
+	if (accelMag > m_options.ptclForceLimit) accelMag = m_options.ptclForceLimit;
+
 	float accelX = accelMag * normDx;
 	float accelY = accelMag * normDy;
 
@@ -67,6 +70,7 @@ void FluidSim::interParticleForce (Particle &self, Particle &other)
 
 }
 
+/*
 void FluidSim::wallForce (Particle &self)
 {
 
@@ -95,6 +99,39 @@ void FluidSim::wallForce (Particle &self)
 
 	self.velX += accelX * m_options.simSpeed;
 	self.velY += accelY * m_options.simSpeed;
+
+}
+*/
+
+
+void FluidSim::wallForce (Particle &self)
+{
+
+	float distFromLeft = self.posX;
+	float distFromRight = m_options.winWidth - self.posX;
+
+	float distFromTop = self.posY;
+	float distFromBottom = m_options.winHeight - self.posY;
+
+
+	if (distFromLeft < m_options.ptclRadius)
+	{
+		self.velX = m_options.wallElasticity * fabs(self.velX);
+	}
+	else if (distFromRight < m_options.ptclRadius)
+	{
+		self.velX = m_options.wallElasticity * -fabs(self.velX);
+	}
+
+
+	if (distFromTop < m_options.ptclRadius)
+	{
+		self.velY = m_options.wallElasticity * fabs(self.velY);
+	}
+	else if (distFromBottom < m_options.ptclRadius)
+	{
+		self.velY = m_options.wallElasticity * -fabs(self.velY);
+	}
 
 }
 

@@ -33,7 +33,8 @@ struct FluidOptions
 	float ptclFarForceConstant = -40;
 	float farForceAsymp = 10;
 	float ptclNearForceConstant = 10;
-	float wallForceConstant = 10;
+	float ptclForceLimit = 30;
+	float wallElasticity = 1;
 	float frictionConstant = 0.1;
 	float gravityConstant = -2;
 
@@ -47,6 +48,9 @@ class FluidSim
 		void populate (std::vector<Particle> ptcls);
 		void run ();
 
+		float calcTotalKE ();
+		float calcAvgKE ();
+
 	private:
 		void render ();
 		void drawParticle (Particle ptcl, SDL_FColor color);
@@ -58,6 +62,7 @@ class FluidSim
 		void wallForce (Particle &self);
 		void frictionForce (Particle &self);
 		void gravityForce (Particle &self);
+
 
 		static bool m_created;
 

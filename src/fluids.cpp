@@ -1,5 +1,9 @@
 #include "fluids.hpp"
 
+#include <chrono>
+#include <iostream>
+
+
 bool FluidSim::m_created = false;
 
 FluidSim::FluidSim (FluidOptions options)
@@ -31,8 +35,12 @@ void FluidSim::populate (std::vector<Particle> ptcls)
 }
 
 
+
 void FluidSim::run ()
 {
+
+	auto oldTime = time(0);
+
 	m_window = SDL_CreateWindow("Fluids", m_options.winWidth, m_options.winHeight, 0);
 
 	m_renderer = SDL_CreateRenderer(m_window, 0);
@@ -43,6 +51,15 @@ void FluidSim::run ()
 	{
 
 		render();
+
+
+		auto newTime = time(0);
+
+		if (newTime > oldTime)
+		{
+			std::cout << "Total KE: " << calcTotalKE() << ", Avg KE: " << calcAvgKE() << std::endl;
+			oldTime = newTime;
+		}
 
 
 		SDL_Event e;

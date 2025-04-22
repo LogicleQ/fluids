@@ -14,19 +14,20 @@ int main ()
 
 	FluidOptions options
 	{
-		.winWidth = 1000,
-		.winHeight = 1000,
+		.winWidth = 700,
+		.winHeight = 700,
 
 		.ptclRadius = 4,
 		.ptclSides = 10,
 
-		.simSpeed = 0.09,
-		.ptclFarForceConstant = -90,
+		.simSpeed = 0.2,
+		.ptclFarForceConstant = -80,
 		.farForceAsymp = 10,
 		.ptclNearForceConstant = 70,
-		.wallForceConstant = 50,
-		.frictionConstant = 0.02,
-		.gravityConstant = -0.04 
+		.ptclForceLimit = 30,
+		.wallElasticity = 0.8,
+		.frictionConstant = 0.012,
+		.gravityConstant = -0.08
 	};
 
 
@@ -39,7 +40,7 @@ int main ()
 	//populate with random positions
 	srand(time(0));
 
-	for (int i = 0; i < 600; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		float x = randFloat() * options.winWidth;
 		float y = randFloat() * options.winHeight;

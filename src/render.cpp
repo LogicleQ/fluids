@@ -21,7 +21,7 @@ void FluidSim::render ()
 
 
 		float r = 0.1 * speed;
-		float g = 0.4 + 0.2 * speed;
+		float g = 0.4 + 0.2 * speed - 0.007 * speed * speed;
 		float b = 1 - 0.05 * speed;
 
 		drawParticle(ptcl, {r, g, b, 1});

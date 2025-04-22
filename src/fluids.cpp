@@ -7,7 +7,9 @@
 bool FluidSim::m_created = false;
 
 FluidSim::FluidSim (FluidOptions options)
-	: m_options {options}
+	: m_options {options},
+		m_ambientForceActive {false},
+		m_trueSpeed {options.simSpeed}
 {
 
 	if (m_created)
@@ -53,27 +55,49 @@ void FluidSim::run ()
 		render();
 
 
-		auto newTime = time(0);
-
-		if (newTime > oldTime)
+		if (m_options.logEnergy)
 		{
-			std::cout << "Total KE: " << calcTotalKE() << ", Avg KE: " << calcAvgKE() << std::endl;
-			oldTime = newTime;
-		}
+			auto newTime = time(0);
 
-
-		SDL_Event e;
-		while(SDL_PollEvent(&e))
-		{
-
-			switch(e.type)
+			if (newTime > oldTime)
 			{
-				case SDL_EVENT_QUIT:
-					running = false;
-					break;
+				std::cout << "Total KE: " << calcTotalKE() << ", Avg KE: " << calcAvgKE() << std::endl;
+				oldTime = newTime;
 			}
 		}
 
 
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+
+			switch (e.type)
+			{
+
+				case SDL_EVENT_QUIT:
+					running = false;
+					break;
+
+			}
+
+			checkKeystrokes (e);
+
+		}
+
+
 	}
+}
+
+
+void FluidSim::zeroVels ()
+{
+
+	for (size_t i = 0; i < m_ptcls.size(); ++i)
+	{
+		Particle &ptcl = m_ptcls[i];
+
+		ptcl.velX = 0;
+		ptcl.velY = 0;
+	}
+
 }

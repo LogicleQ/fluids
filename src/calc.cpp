@@ -9,8 +9,8 @@ void FluidSim::move ()
 	{
 		Particle &self = m_ptcls[i];
 
-		self.posX += self.velX * m_options.simSpeed;
-		self.posY += self.velY * m_options.simSpeed;
+		self.posX += self.velX * m_trueSpeed;
+		self.posY += self.velY * m_trueSpeed;
 	}
 
 }
@@ -35,6 +35,11 @@ void FluidSim::accel ()
 
 		gravityForce(self);
 
+		if (m_ambientForceActive)
+		{
+			ambientForce(self);
+		}
+
 		//these two should be calculated last
 		wallForce(self);
 		frictionForce(self);
@@ -55,7 +60,7 @@ void FluidSim::interParticleForce (Particle &self, Particle &other)
 	float normDy = dy / dist;
 
 
-	float asymp = m_options.farForceAsymp;
+	float asymp = m_options.ptclFarForceAsymp;
 	float accelMag = m_options.ptclFarForceConstant / (dist + asymp) / (dist + asymp);
 	accelMag += m_options.ptclNearForceConstant / dist / dist;
 
@@ -65,43 +70,11 @@ void FluidSim::interParticleForce (Particle &self, Particle &other)
 	float accelX = accelMag * normDx;
 	float accelY = accelMag * normDy;
 
-	self.velX += accelX * m_options.simSpeed;
-	self.velY += accelY * m_options.simSpeed;
+	self.velX += accelX * m_trueSpeed;
+	self.velY += accelY * m_trueSpeed;
 
 }
 
-/*
-void FluidSim::wallForce (Particle &self)
-{
-
-	float distFromLeft = self.posX;
-	float distFromRight = m_options.winWidth - self.posX;
-
-	float distFromTop = self.posY;
-	float distFromBottom = m_options.winHeight - self.posY;
-
-	float forceConstant = m_options.wallForceConstant;
-
-	auto forceMag = [forceConstant] (float dist) -> float
-	{
-		if (dist < 0)
-		{
-			return forceConstant / 5 / 5;
-		}
-		else
-		{
-			return forceConstant / (dist + 5) / (dist + 5);
-		}
-	};
-
-	float accelX = forceMag(distFromLeft) - forceMag(distFromRight);
-	float accelY = forceMag(distFromTop) - forceMag(distFromBottom);
-
-	self.velX += accelX * m_options.simSpeed;
-	self.velY += accelY * m_options.simSpeed;
-
-}
-*/
 
 
 void FluidSim::wallForce (Particle &self)
@@ -144,17 +117,17 @@ void FluidSim::frictionForce (Particle &self)
 	float normVelX = self.velX / ptclSpeed;
 	float normVelY = self.velY / ptclSpeed;
 
-	float frictionX = normVelX * -m_options.frictionConstant;
-	float frictionY = normVelY * -m_options.frictionConstant;
+	float frictionX = normVelX * -m_options.frictionForceConstant;
+	float frictionY = normVelY * -m_options.frictionForceConstant;
 
-	if (fabs(self.velX) >= fabs(frictionX * m_options.simSpeed))
+	if (fabs(self.velX) >= fabs(frictionX * m_trueSpeed))
 	{
-		self.velX += frictionX * m_options.simSpeed;
+		self.velX += frictionX * m_trueSpeed;
 	}
 
-	if (fabs(self.velY) >= fabs(frictionY * m_options.simSpeed))
+	if (fabs(self.velY) >= fabs(frictionY * m_trueSpeed))
 	{
-		self.velY += frictionY * m_options.simSpeed;
+		self.velY += frictionY * m_trueSpeed;
 	}
 
 }
@@ -162,5 +135,24 @@ void FluidSim::frictionForce (Particle &self)
 
 void FluidSim::gravityForce (Particle &self)
 {
-	self.velY -= m_options.gravityConstant * m_options.simSpeed;
+	self.velY += m_options.gravityForceConstant * m_trueSpeed;
+}
+
+
+void FluidSim::ambientForce (Particle &self)
+{
+
+	float halfWidth = m_options.winWidth / 2.0;
+	float centeredPixel = halfWidth + m_options.ambientForceCenter * halfWidth;
+
+	float leftBound = centeredPixel - m_options.ambientForceRadius * halfWidth;
+	float rightBound = centeredPixel + m_options.ambientForceRadius * halfWidth;
+
+	float topBound = m_options.winHeight * (1 - m_options.ambientForceHeight);
+
+	if (self.posY > topBound && self.posX > leftBound && self.posX < rightBound)
+	{
+		self.velY += m_options.ambientForceConstant * m_trueSpeed;
+	}
+
 }

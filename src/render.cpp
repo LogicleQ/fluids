@@ -8,11 +8,6 @@ void FluidSim::render ()
 	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_renderer);
 
-
-	move();
-	accel();
-
-
 	for (size_t i = 0; i < m_ptcls.size(); ++i)
 	{
 		Particle &ptcl = m_ptcls[i];
@@ -20,9 +15,9 @@ void FluidSim::render ()
 		double speed = sqrt(ptcl.velX * ptcl.velX + ptcl.velY * ptcl.velY);
 
 
-		float r = 0.1 * speed;
-		float g = 0.4 + 0.2 * speed - 0.007 * speed * speed;
-		float b = 1 - 0.05 * speed;
+		float r = 0.04 * speed;
+		float g = 0.4 + 0.1 * speed - 0.002 * speed * speed;
+		float b = 1 - 0.02 * speed;
 
 		drawParticle(ptcl, {r, g, b, 1});
 	}
@@ -52,8 +47,8 @@ void FluidSim::drawParticle (Particle ptcl, SDL_FColor color)
 	{
 		float theta = 2 * PI * i / m_options.ptclSides;
 
-		float tempX = ptcl.posX + m_options.ptclRadius * cos(theta);
-		float tempY = ptcl.posY + m_options.ptclRadius * sin(theta);
+		float tempX = ptcl.posX + m_options.ptclVisualRadius * cos(theta);
+		float tempY = ptcl.posY + m_options.ptclVisualRadius * sin(theta);
 
 		SDL_Vertex vertex
 		{

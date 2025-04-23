@@ -70,9 +70,9 @@ void parseOptions (FluidOptions &options)
 		{
 			options.winHeight = std::stoi(arg);
 		}
-		else if (cmd == "particle_radius")
+		else if (cmd == "particle_visual_radius")
 		{
-			options.ptclRadius = std::stof(arg);
+			options.ptclVisualRadius = std::stof(arg);
 		}
 		else if (cmd == "particle_sides")
 		{
@@ -89,9 +89,24 @@ void parseOptions (FluidOptions &options)
 				options.logEnergy = false;
 			}
 		}
+		else if (cmd == "zero_velocity_countdowns")
+		{
+			size_t num = tokens.size() - 1;
+
+
+			for (int i = num; i > 0; --i)
+			{
+				options.zeroVelCountdowns.push_back( stof(tokens.at(i)) );
+			}
+
+		}
 		else if (cmd == "simulation_speed")
 		{
 			options.simSpeed = stof(arg);
+		}
+		else if (cmd == "particle_physical_radius")
+		{
+			options.ptclPhysicalRadius = stof(arg);
 		}
 		else if (cmd == "particle_far_force_constant")
 		{

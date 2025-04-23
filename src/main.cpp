@@ -18,12 +18,14 @@ int main ()
 		.winWidth = 800,
 		.winHeight = 800,
 
-		.ptclRadius = 4, //in pixels
+		.ptclVisualRadius = 4, //in pixels
 		.ptclSides = 10,
 
 		.logEnergy = true,
 
 		.simSpeed = 0.2,
+
+		.ptclPhysicalRadius = 4,
 
 		.ptclFarForceConstant = -120,
 		.ptclFarForceAsymp = 10,
@@ -51,10 +53,10 @@ int main ()
 	//populate with random positions
 	srand(time(0));
 
-	for (int i = 0; i < 1200; ++i)
+	for (int i = 0; i < 1400; ++i)
 	{
 		float x = randFloat() * options.winWidth;
-		float y = randFloat() * options.winHeight / 2 + (0.5) * options.winHeight;
+		float y = randFloat() * options.winHeight;
 
 		float vx = randFloat() * 2 - 1;
 		float vy = randFloat() * 2 - 1;

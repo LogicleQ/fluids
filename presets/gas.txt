@@ -1,38 +1,40 @@
 // Window dimensions
 
-window_width 800
-window_height 800
+window_width 700
+window_height 700
 
 
 
 // Particle rendering options
 
-particle_radius 4
+particle_visual_radius 4
 particle_sides 10
 
 
-// Info
+// Miscellaneous
 
 log_energy yes
-
+zero_velocity_countdowns
 
 
 // Simulation options
 
 simulation_speed 0.2
 
-particle_far_force_constant -120
-particle_far_force_asymptote 10
-particle_near_force_constant 100
+particle_physical_radius 4
+
+particle_far_force_constant -25
+particle_far_force_asymptote 30
+particle_near_force_constant 23
 particle_force_limit 30
 
-wall_elasticity 0.85
-friction_force_constant 0.01
-gravity_force_constant 0.1
+wall_elasticity 1
+friction_force_constant 0.00
+gravity_force_constant 0.01
 
 ambient_force_center 0      //0 is center of window; -1 and 1 are left/right walls
 ambient_force_radius 0.1    //1 means the radius is half of window_width
-ambient_force_height 0.1    //1 is window_height
+ambient_force_height 1    //1 is window_height
 ambient_force_constant -0.4
 
 

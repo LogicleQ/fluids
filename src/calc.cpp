@@ -87,23 +87,35 @@ void FluidSim::wallForce (Particle &self)
 	float distFromBottom = m_options.winHeight - self.posY;
 
 
-	if (distFromLeft < m_options.ptclRadius)
+	if (distFromLeft < m_options.ptclPhysicalRadius)
 	{
-		self.velX = m_options.wallElasticity * fabs(self.velX);
+		if (self.velX < 0)
+		{
+			self.velX = m_options.wallElasticity * -self.velX;
+		}
 	}
-	else if (distFromRight < m_options.ptclRadius)
+	else if (distFromRight < m_options.ptclPhysicalRadius)
 	{
-		self.velX = m_options.wallElasticity * -fabs(self.velX);
+		if (self.velX > 0)
+		{
+			self.velX = m_options.wallElasticity * -self.velX;
+		}
 	}
 
 
-	if (distFromTop < m_options.ptclRadius)
+	if (distFromTop < m_options.ptclPhysicalRadius)
 	{
-		self.velY = m_options.wallElasticity * fabs(self.velY);
+		if (self.velY < 0)
+		{
+			self.velY = m_options.wallElasticity * -self.velY;
+		}
 	}
-	else if (distFromBottom < m_options.ptclRadius)
+	else if (distFromBottom < m_options.ptclPhysicalRadius)
 	{
-		self.velY = m_options.wallElasticity * -fabs(self.velY);
+		if (self.velY > 0)
+		{
+			self.velY = m_options.wallElasticity * -self.velY;
+		}
 	}
 
 }

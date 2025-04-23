@@ -37,11 +37,13 @@ void FluidSim::populate (std::vector<Particle> ptcls)
 }
 
 
+#define time_ms() (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 
 void FluidSim::run ()
 {
 
-	auto oldTime = time(0);
+	uint64_t prevLogTime = time_ms();
+	uint64_t prevZeroTime = time_ms();
 
 	m_window = SDL_CreateWindow("Fluids", m_options.winWidth, m_options.winHeight, 0);
 
@@ -52,19 +54,36 @@ void FluidSim::run ()
 	while (running)
 	{
 
+		move();
+		accel();
+
 		render();
+
+
+
+		const uint64_t newTime = time_ms();
+
+
+		auto &countdowns = m_options.zeroVelCountdowns;
+		if (countdowns.size() > 0 && newTime >= prevZeroTime + (uint64_t) (countdowns.back() * 1000))
+		{
+			zeroVels();
+			prevZeroTime = newTime;
+
+			countdowns.pop_back();
+		}
 
 
 		if (m_options.logEnergy)
 		{
-			auto newTime = time(0);
 
-			if (newTime > oldTime)
+			if (newTime >= prevLogTime + 1000)
 			{
 				std::cout << "Total KE: " << calcTotalKE() << ", Avg KE: " << calcAvgKE() << std::endl;
-				oldTime = newTime;
+				prevLogTime = newTime;
 			}
 		}
+
 
 
 		SDL_Event e;

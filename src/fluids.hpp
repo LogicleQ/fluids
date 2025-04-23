@@ -25,16 +25,19 @@ struct FluidOptions
 	uint32_t winHeight = 800;
 
 	//particle rendering properties
-	float ptclRadius = 4; //in pixels
+	float ptclVisualRadius = 4; //in pixels
 	uint16_t ptclSides = 10;
 
 
-	//info
+	//misc
 	bool logEnergy = true;
+	std::vector<float> zeroVelCountdowns;
 
 
 	//simulation properties
 	float simSpeed = 0.2;
+
+	float ptclPhysicalRadius = 4;
 
 	float ptclFarForceConstant = -120;
 	float ptclFarForceAsymp = 10;
